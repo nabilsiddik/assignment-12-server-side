@@ -63,6 +63,7 @@ async function run() {
 
     const userCollection = client.db("assignment-12").collection("users");
     const plantCollection = client.db("assignment-12").collection("plants");
+    const ordersCollection = client.db("assignment-12").collection("orders");
 
     // generate jwt
     // app.post('/jwt', async(req, res) => {
@@ -138,6 +139,30 @@ async function run() {
       const result = await plantCollection.findOne(query);
       res.send(result);
     });
+
+    // Manage Plant quantity
+    app.patch('/plant/quantity/:id', async(req, res) => {
+      const id = req.params.id
+      const {quantityToUpdate} = req.body
+      const query = {_id: new ObjectId(id)}
+      const updatedDoc = {
+        $inc: {quantity: -quantityToUpdate}
+      }
+
+      const result = await plantCollection.updateOne(query, updatedDoc)
+      res.send(result)
+    })
+
+
+
+
+    // Orders related apis
+    app.post("/order", async (req, res) => {
+      const order = req.body;
+      const result = await ordersCollection.insertOne(order);
+      res.send(result);
+    });
+
 
     // Get all users
     // app.get('/users', async (req, res) => {
